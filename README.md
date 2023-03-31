@@ -114,7 +114,7 @@ Currently, the library isn't very feature rich or mature. If you'd like to offer
 
 ##Contact
 
-Have a question? I'm on twitter: [@sebathi](https://twitter.com/sebathi)
+Have a question? I'm on twitter: [@cloudGuru_saas](https://twitter.com/cloudGuru_saas)
 
 
 ##License
