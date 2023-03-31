@@ -115,6 +115,7 @@ Currently, the library isn't very feature rich or mature. If you'd like to offer
 ##Contact
 
 Have a question? I'm on twitter: [@cloudGuru_saas](https://twitter.com/cloudGuru_saas)
+Also, checkout my blog at [devops7.com](https://devops7.com)
 
 
 ##License
