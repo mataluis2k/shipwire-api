@@ -156,6 +156,16 @@ class ShipwireConnector
             if ($data['status'] >= 300) {
                 throw new ShipwireConnectionException($data['message'], $data['status']);
             }
+            // while testing, finding SW is sending 200 OK but payload has errors.
+            // this should capture those error items.
+            if (! empty($data['errors'])) {
+                $errors = [];
+                foreach($data['errors'] as $error)
+                {
+                    $errors[] = "{$error['code']}: {$error['message']}";
+                }
+                throw new ShipwireConnectionException(implode("; ", $errors));
+            }
             return $onlyResource?$data['resource']:$data;
         } catch (RequestException $e) {
             if ($responseBody = $e->getResponse()->getBody()) {
@@ -190,5 +200,47 @@ class ShipwireConnector
             return self::$baseUrl;
         }
         return self::$sandboxBaseUrl;
+    }
+
+    /**
+     * This method is specific for downloading PDF.
+     * Can modify this later to accept header for different file types
+     * @param $resource
+     * @param $fileResource
+     * @return mixed
+     * @throws InvalidAuthorizationException
+     * @throws InvalidRequestException
+     * @throws ShipwireConnectionException
+     */
+    public function download($resource, $fileResource)
+    {
+        try {
+            $client = self::getClient();
+            $headers = [
+                'User-Agent'    => 'mataluis2k-shipwireapi/1.0',
+                'Accept'        => 'application/pdf',
+                'Authorization' => 'Basic ' . self::$authorizationCode,
+            ];
+
+            $response = $client->request("GET", '/api/' . self::$version . '/'.$resource, [
+                'headers' => $headers,
+                'sink' => $fileResource,
+            ]);
+
+            return $response->getBody()->getContents();
+        } catch (RequestException $exception) {
+            $code = $exception->getCode();
+            switch ($exception->getCode()) {
+                case 401:
+                    throw new InvalidAuthorizationException($exception->getMessage(), $exception->getCode());
+                    break;
+                case 400:
+                    throw new InvalidRequestException($exception->getMessage(), $exception->getCode());
+                    break;
+            }
+            throw new ShipwireConnectionException($exception->getMessage(), $exception->getCode());
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
     }
 }
