@@ -212,7 +212,7 @@ class ShipwireConnector
      * @throws InvalidRequestException
      * @throws ShipwireConnectionException
      */
-    public function download($resource, $fileResource)
+    public function download($resource)
     {
         try {
             $client = self::getClient();
@@ -222,12 +222,10 @@ class ShipwireConnector
                 'Authorization' => 'Basic ' . self::$authorizationCode,
             ];
 
-            $response = $client->request("GET", '/api/' . self::$version . '/'.$resource, [
+            return $client->request("GET", '/api/' . self::$version . '/'.$resource, [
                 'headers' => $headers,
-                'sink' => $fileResource,
             ]);
 
-            return $response->getBody()->getContents();
         } catch (RequestException $exception) {
             $code = $exception->getCode();
             switch ($exception->getCode()) {

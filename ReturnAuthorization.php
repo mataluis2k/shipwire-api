@@ -153,7 +153,7 @@ class ReturnAuthorization extends ShipwireComponent
     public function labelsPDF($returnId, $pdfFileResource) // array $params = [], int $page = 0, int $limit = 50
     {
         $route =$this->getRoute('returns/{id}/labels', $returnId);
-        return $this->_connector->download($route, $returnId, $pdfFileResource);
+        return $this->_connector->download($route);
     }
 
     /**
