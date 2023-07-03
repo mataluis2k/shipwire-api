@@ -174,6 +174,10 @@ class ShipwireConnector
                 if($returnDespiteError) {
                     return $onlyResource?$data['resource']:$data;
                 }
+
+                if($data == null) {
+                    throw $e;
+                }
                 
                 switch ($data['status']) {
                     case 401:
