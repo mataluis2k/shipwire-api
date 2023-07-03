@@ -169,7 +169,7 @@ class ShipwireConnector
             return $onlyResource?$data['resource']:$data;
         } catch (RequestException $e) {
             if ($responseBody = $e->getResponse()->getBody()) {
-                $data = json_decode($responseBody->__toString(), true);
+                $data = json_decode($responseBody, true);
 
                 if($returnDespiteError) {
                     return $onlyResource?$data['resource']:$data;
