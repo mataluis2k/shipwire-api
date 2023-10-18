@@ -63,7 +63,19 @@ class ShipwireConnector
      */
     public static function init($username, $password, $environment = null, HandlerStack $handlerStack = null)
     {
-        self::$authorizationCode = base64_encode($username . ':' . $password);
+        if( $username AND $password )
+        {
+            self::$authorizationCode = "Basic " . base64_encode($username . ':' . $password);
+        }
+        elseif( $username AND !$password )
+        {
+            self::$authorizationCode = "ShipwireKey " . $username;
+        }
+        else
+        {
+            self::$authorizationCode = "";
+        }
+
         if (null !== $environment) {
             self::$environment = $environment;
         }
@@ -101,7 +113,7 @@ class ShipwireConnector
     private function getClient()
     {
         if (!isset($this->client)) {
-            if (!isset(self::$authorizationCode)) {
+            if (!self::$authorizationCode) {
                 throw new \Exception('Invalid authorization code');
             }
             $config = ['base_uri' => self::getEndpointUrl()];
@@ -137,7 +149,7 @@ class ShipwireConnector
             $headers = [
                 'User-Agent'    => 'mataluis2k-shipwireapi/1.0',
                 'Accept'        => 'application/json',
-                'Authorization' => 'Basic ' . self::$authorizationCode
+                'Authorization' => self::$authorizationCode
             ];
 
             if ($body !== null) {
@@ -219,7 +231,7 @@ class ShipwireConnector
             $headers = [
                 'User-Agent'    => 'mataluis2k-shipwireapi/1.0',
                 'Accept'        => 'application/pdf',
-                'Authorization' => 'Basic ' . self::$authorizationCode,
+                'Authorization' => self::$authorizationCode,
             ];
 
             return $client->request("GET", '/api/' . self::$version . '/'.$resource, [
